@@ -38,19 +38,21 @@ export class FlatList<ItemT> extends React.Component<FlatListProps<ItemT>>
 
     const data = _data || []
 
-    const Row = (row: { index: number; style: any }) => (
-      // console.log('xxx row', row.index, row.style),
-      <div style={row.style}>
-        {renderItem({
-          item: data[row.index],
-          index: row.index,
-          separators: {
-            highlight: () => undefined,
-            unhighlight: () => undefined,
-            updateProps: () => undefined,
-          },
-        })}
-      </div>
+    const Row = React.forwardRef<View, { index: number; style: any }>(
+      (row, ref) => (
+        // console.log('xxx row', row.index, row.style),
+        <View ref={ref} style={row.style}>
+          {renderItem({
+            item: data[row.index],
+            index: row.index,
+            separators: {
+              highlight: () => undefined,
+              unhighlight: () => undefined,
+              updateProps: () => undefined,
+            },
+          })}
+        </View>
+      ),
     )
 
     const ListComponent = getItemLayout ? (
