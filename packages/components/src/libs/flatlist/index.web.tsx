@@ -13,6 +13,23 @@ export interface FlatListProps<ItemT>
 
 export class FlatList<ItemT> extends React.Component<FlatListProps<ItemT>>
   implements CrossPlatformFlatList<ItemT> {
+  renderRow = React.forwardRef<View, { index: number; style: any }>(
+    (row, ref) => (
+      // console.log('xxx row', row.index, row.style),
+      <View ref={ref} style={row.style}>
+        {this.props.renderItem({
+          item: this.props.data![row.index],
+          index: row.index,
+          separators: {
+            highlight: () => undefined,
+            unhighlight: () => undefined,
+            updateProps: () => undefined,
+          },
+        })}
+      </View>
+    ),
+  )
+
   scrollToItem(_params: {
     animated?: boolean
     item: ItemT
@@ -31,29 +48,11 @@ export class FlatList<ItemT> extends React.Component<FlatListProps<ItemT>>
       pointerEvents,
       renderItem,
       style,
-      ...otherProps
     } = this.props
 
     // console.log('xxx props not used yet', { ...otherProps })
 
     const data = _data || []
-
-    const Row = React.forwardRef<View, { index: number; style: any }>(
-      (row, ref) => (
-        // console.log('xxx row', row.index, row.style),
-        <View ref={ref} style={row.style}>
-          {renderItem({
-            item: data[row.index],
-            index: row.index,
-            separators: {
-              highlight: () => undefined,
-              unhighlight: () => undefined,
-              updateProps: () => undefined,
-            },
-          })}
-        </View>
-      ),
-    )
 
     const ListComponent = getItemLayout ? (
       <AutoSizer>
@@ -67,7 +66,7 @@ export class FlatList<ItemT> extends React.Component<FlatListProps<ItemT>>
             layout={horizontal ? 'horizontal' : 'vertical'}
             width={width}
           >
-            {Row}
+            {this.renderRow}
           </VariableSizeList>
         )}
       </AutoSizer>
@@ -82,7 +81,7 @@ export class FlatList<ItemT> extends React.Component<FlatListProps<ItemT>>
             layout={horizontal ? 'horizontal' : 'vertical'}
             width={width}
           >
-            {Row}
+            {this.renderRow}
           </DynamicSizeList>
         )}
       </AutoSizer>
