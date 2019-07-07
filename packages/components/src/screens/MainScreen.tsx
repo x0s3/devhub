@@ -372,11 +372,11 @@ export const MainScreen = React.memo(() => {
           },
         ]}
       >
-        <Sidebar
+        {/* <Sidebar
           key="main-screen-sidebar"
           horizontal={horizontalSidebar}
           zIndex={1000}
-        />
+        /> */}
 
         {horizontalSidebar ? (
           <Separator horizontal zIndex={1000} />

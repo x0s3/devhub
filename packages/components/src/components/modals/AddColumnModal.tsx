@@ -178,6 +178,7 @@ function AddColumnModalItem({
 
   const touchableRef = useRef(null)
   const initialIsHovered = useHover(touchableRef, isHovered => {
+    if (cacheRef.current.isHovered === isHovered) return
     cacheRef.current.isHovered = isHovered
     updateStyles()
   })
@@ -207,9 +208,9 @@ function AddColumnModalItem({
     setSpringAnimatedStyles(getStyles())
   }, [getStyles])
 
-  useLayoutEffect(() => {
-    updateStyles()
-  }, [updateStyles])
+  // useLayoutEffect(() => {
+  //   updateStyles()
+  // }, [updateStyles])
 
   return (
     <SpringAnimatedTouchableOpacity

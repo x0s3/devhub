@@ -39,7 +39,7 @@
     "react-spring": "8.0.25",
     "react-test-renderer": "16.8.6",
     "react-virtualized-auto-sizer": "1.0.2",
-    "react-window": "npm:@brunolemos/react-window@latest",
+    "react-window": "npm:@brunolemos/react-window",
     "redux": "4.0.1",
     "redux-devtools-extension": "2.13.8",
     "redux-persist": "5.10.0",

@@ -178,7 +178,7 @@ export const Columns = React.memo((props: ColumnsProps) => {
       bounces={!swipeable}
       data={columnIds}
       data-paging-enabled-fix
-      disableVirtualization={Platform.OS === 'web'}
+      disableVirtualization={false}
       getItemLayout={getItemLayout}
       horizontal
       initialNumToRender={Math.ceil(
@@ -190,7 +190,7 @@ export const Columns = React.memo((props: ColumnsProps) => {
       overScrollMode="never"
       pagingEnabled={pagingEnabled}
       pointerEvents={pointerEvents}
-      removeClippedSubviews={Platform.OS !== 'web'}
+      removeClippedSubviews
       scrollEnabled={!swipeable}
       windowSize={2}
       {...otherProps}

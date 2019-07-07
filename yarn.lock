@@ -12380,7 +12380,7 @@ react-scripts@3.0.1:
 
 react-spring@8.0.25:
   version "8.0.25"
-  resolved "https://registry.yarnpkg.com/react-spring/-/react-spring-8.0.25.tgz#3b19c370e26b0a62630390c5daf3092e714805c4"
+  resolved "https://registry.npmjs.org/react-spring/-/react-spring-8.0.25.tgz#3b19c370e26b0a62630390c5daf3092e714805c4"
   integrity sha512-KLSLI9ccpoxvxzCbtTqSOHNHhndxAeEcHsgFZoyybP3GpGh0axmtauUAH8c3XkozIW8r9gScvrCWw3F1EPIcBw==
   dependencies:
     "@babel/runtime" "^7.3.1"
@@ -12414,10 +12414,10 @@ react-virtualized-auto-sizer@1.0.2:
   resolved "https://registry.npmjs.org/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.2.tgz#a61dd4f756458bbf63bd895a92379f9b70f803bd"
   integrity sha512-MYXhTY1BZpdJFjUovvYHVBmkq79szK/k7V3MO+36gJkWGkrXKtyr4vCPtpphaTLRAdDNoYEYFZWE8LjN+PIHNg==
 
-"react-window@npm:@brunolemos/react-window@latest":
-  version "1.9.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@brunolemos/react-window/-/react-window-1.9.0-alpha.1.tgz#4ea1c1b3befb4f8013f55d06e73621cfe2bd790a"
-  integrity sha512-9+/In7CQVlNf3glfUvmijOYz4iPKdiKyhFmAwruO6sSHD5FxXqQGp3AjpAYXuUpadOcCekId+g9Ni2ZP0fYl+A==
+"react-window@npm:@brunolemos/react-window":
+  version "1.9.0-alpha.2"
+  resolved "https://registry.npmjs.org/@brunolemos/react-window/-/react-window-1.9.0-alpha.2.tgz#c9123d3685ed05566d5dd3ed8eabfca6287ac0c6"
+  integrity sha512-BKr1k24zxvNDCVSMGc+UtN5anDNM+tq2VpBrZgHIaPHLzW0RzH79J5mM5z6H+dTHbjUr9iYZerFZQHqMAorNNA==
   dependencies:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"

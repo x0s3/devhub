@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { View } from 'react-native'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList } from 'react-window'
+import { DynamicSizeList, VariableSizeList } from 'react-window'
 
 import { sharedStyles } from '../../styles/shared'
 import { CrossPlatformFlatList, CrossPlatformFlatListProps } from './types'
@@ -13,77 +13,75 @@ export interface FlatListProps<ItemT>
 
 export class FlatList<ItemT> extends React.Component<FlatListProps<ItemT>>
   implements CrossPlatformFlatList<ItemT> {
-  renderRow = React.forwardRef<any, { index: number; style: any }>(
-    (row, ref) => (
-      // console.log('xxx row', row.index, row.style),
-      <div ref={ref} style={row.style}>
-        {this.props.renderItem({
-          item: this.props.data![row.index],
-          index: row.index,
-          separators: {
-            highlight: () => undefined,
-            unhighlight: () => undefined,
-            updateProps: () => undefined,
-          },
-        })}
-      </div>
-    ),
+  static displayName = 'FlatList (react-window)'
+
+  // tslint:disable member-ordering
+  getItemKey = (index: number) => {
+    return this.props.keyExtractor(this.props.data![index], index)
+  }
+
+  Row = React.forwardRef<any, { index: number; style?: any }>((row, ref) => (
+    <div ref={ref} style={row.style}>
+      {this.props.renderItem({
+        item: this.props.data![row.index],
+        index: row.index,
+        separators: {
+          highlight: () => undefined,
+          unhighlight: () => undefined,
+          updateProps: () => undefined,
+        },
+      })}
+    </div>
+  ))
+
+  renderNormalScrollView = (
+    <View style={sharedStyles.flex}>
+      {(this.props.data || []).map((_item, index) => (
+        <Fragment key={this.getItemKey(index)}>
+          <this.Row index={index} />
+        </Fragment>
+      ))}
+    </View>
   )
 
-  ListComponent = (
+  renderVariableSizeList = (
     <AutoSizer>
       {({ width, height }) => (
-        // console.log('xxx AutoSizer VariableSizeList', width, height),
-        <FixedSizeList
+        <VariableSizeList
           height={height}
           itemCount={(this.props.data || []).length}
           itemKey={this.getItemKey}
-          itemSize={50}
+          itemSize={this.itemSize}
           layout={this.props.horizontal ? 'horizontal' : 'vertical'}
           width={width}
         >
-          {this.renderRow}
-        </FixedSizeList>
+          {this.Row}
+        </VariableSizeList>
       )}
     </AutoSizer>
   )
 
-  // getItemLayout ? (
-  //   <AutoSizer>
-  //     {({ width, height }) => (
-  //       // console.log('xxx AutoSizer VariableSizeList', width, height),
-  //       <VariableSizeList
-  //         height={height}
-  //         itemCount={data.length}
-  //         itemKey={this.getItemKey}
-  //         itemSize={this.itemSize}
-  //         layout={horizontal ? 'horizontal' : 'vertical'}
-  //         width={width}
-  //       >
-  //         {this.renderRow}
-  //       </VariableSizeList>
-  //     )}
-  //   </AutoSizer>
-  // ) : (
-  //   <AutoSizer>
-  //     {({ width, height }) => (
-  //       // console.log('xxx AutoSizer DynamicSizeList', width, height),
-  //       <DynamicSizeList
-  //         height={height}
-  //         itemCount={data.length}
-  //         itemKey={this.getItemKey}
-  //         layout={horizontal ? 'horizontal' : 'vertical'}
-  //         width={width}
-  //       >
-  //         {this.renderRow}
-  //       </DynamicSizeList>
-  //     )}
-  //   </AutoSizer>
-  // )
-
-  getItemKey = (index: number) => {
-    return this.props.keyExtractor(this.props.data![index], index)
-  }
+  renderDynamicSizeList = (
+    <AutoSizer>
+      {({ width, height }) => (
+        <DynamicSizeList
+          height={height}
+          itemCount={(this.props.data || []).length}
+          itemKey={this.getItemKey}
+          layout={this.props.horizontal ? 'horizontal' : 'vertical'}
+          overscanCount={
+            this.props.disableVirtualization ||
+            this.props.removeClippedSubviews === false
+              ? 9999
+              : undefined
+          }
+          width={width}
+        >
+          {this.Row}
+        </DynamicSizeList>
+      )}
+    </AutoSizer>
+  )
 
   itemSize = (index: number) => {
     return this.props.getItemLayout!(this.props.data! as ItemT[], index).length
@@ -98,14 +96,24 @@ export class FlatList<ItemT> extends React.Component<FlatListProps<ItemT>>
   }
 
   render() {
-    const { contentContainerStyle, pointerEvents, style } = this.props
+    const {
+      contentContainerStyle,
+      getItemLayout,
+      pointerEvents,
+      style,
+    } = this.props
 
     // console.log('xxx props not used yet', { ...otherProps })
 
     return (
       <View style={[sharedStyles.flex, style]} pointerEvents={pointerEvents}>
         <View style={[sharedStyles.flex, contentContainerStyle]}>
-          {this.ListComponent}
+          {this.props.disableVirtualization ||
+          this.props.removeClippedSubviews === false
+            ? this.renderNormalScrollView
+            : getItemLayout
+            ? this.renderVariableSizeList
+            : this.renderDynamicSizeList}
         </View>
       </View>
     )

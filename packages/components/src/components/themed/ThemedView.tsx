@@ -98,6 +98,6 @@ function updateStyle(
 
   if (previousStyleRef && _.isEqual(newStyle, previousStyleRef.current)) return
 
-  ref.current.setNativeProps({ style: newStyle })
-  previousStyleRef.current = newStyle
+  // ref.current.setNativeProps({ style: newStyle })
+  // previousStyleRef.current = newStyle
 }

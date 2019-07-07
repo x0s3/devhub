@@ -85,61 +85,54 @@ export function Link(props: LinkProps) {
   const theme = useTheme()
 
   const updateStyles = useCallback(() => {
-    const { isHovered } = cacheRef.current
-
-    const hoverBackgroundThemeColor = getThemeColorOrItself(
-      theme,
-      _hoverBackgroundThemeColor,
-    )
-    const hoverForegroundThemeColor = getThemeColorOrItself(
-      theme,
-      _hoverForegroundThemeColor,
-    )
-
-    if (containerRef.current) {
-      const hoverBackgroundColor = enableBackgroundHover
-        ? (hoverBackgroundThemeColor && hoverBackgroundThemeColor) ||
-          rgba(theme.invert().foregroundColor, 0.2)
-        : undefined
-
-      const backgroundColor =
-        (backgroundThemeColor &&
-          getThemeColorOrItself(theme, backgroundThemeColor)) ||
-        flatContainerStyle.backgroundColor
-
-      containerRef.current!.setNativeProps({
-        style: {
-          backgroundColor:
-            hoverBackgroundColor && isHovered
-              ? hoverBackgroundColor
-              : backgroundColor ||
-                (hoverBackgroundColor ? rgba(hoverBackgroundColor, 0) : null),
-        },
-      })
-    }
-
-    if (textRef.current) {
-      const hoverForegroundColor = enableForegroundHover
-        ? (hoverForegroundThemeColor && hoverForegroundThemeColor) ||
-          theme.primaryBackgroundColor
-        : undefined
-
-      const color =
-        (textProps &&
-          textProps.color &&
-          getThemeColorOrItself(theme, textProps.color)) ||
-        flatTextStyle.color
-
-      textRef.current.setNativeProps({
-        style: {
-          color:
-            hoverForegroundColor && isHovered
-              ? hoverForegroundColor
-              : color ||
-                (hoverForegroundColor ? rgba(hoverForegroundColor, 0) : null),
-        },
-      })
-    }
+    // const { isHovered } = cacheRef.current
+    // const hoverBackgroundThemeColor = getThemeColorOrItself(
+    //   theme,
+    //   _hoverBackgroundThemeColor,
+    // )
+    // const hoverForegroundThemeColor = getThemeColorOrItself(
+    //   theme,
+    //   _hoverForegroundThemeColor,
+    // )
+    // if (containerRef.current) {
+    //   const hoverBackgroundColor = enableBackgroundHover
+    //     ? (hoverBackgroundThemeColor && hoverBackgroundThemeColor) ||
+    //       rgba(theme.invert().foregroundColor, 0.2)
+    //     : undefined
+    //   const backgroundColor =
+    //     (backgroundThemeColor &&
+    //       getThemeColorOrItself(theme, backgroundThemeColor)) ||
+    //     flatContainerStyle.backgroundColor
+    //   containerRef.current!.setNativeProps({
+    //     style: {
+    //       backgroundColor:
+    //         hoverBackgroundColor && isHovered
+    //           ? hoverBackgroundColor
+    //           : backgroundColor ||
+    //             (hoverBackgroundColor ? rgba(hoverBackgroundColor, 0) : null),
+    //     },
+    //   })
+    // }
+    // if (textRef.current) {
+    //   const hoverForegroundColor = enableForegroundHover
+    //     ? (hoverForegroundThemeColor && hoverForegroundThemeColor) ||
+    //       theme.primaryBackgroundColor
+    //     : undefined
+    //   const color =
+    //     (textProps &&
+    //       textProps.color &&
+    //       getThemeColorOrItself(theme, textProps.color)) ||
+    //     flatTextStyle.color
+    //   textRef.current.setNativeProps({
+    //     style: {
+    //       color:
+    //         hoverForegroundColor && isHovered
+    //           ? hoverForegroundColor
+    //           : color ||
+    //             (hoverForegroundColor ? rgba(hoverForegroundColor, 0) : null),
+    //     },
+    //   })
+    // }
   }, [
     _hoverBackgroundThemeColor,
     _hoverForegroundThemeColor,
@@ -153,11 +146,12 @@ export function Link(props: LinkProps) {
   ])
 
   const containerRef = useRef<View>(null)
-  const textRef = useRef<Text>(null)
+  const textRef = useRef<Text | null>(null)
   const initialIsHovered = useHover(
     enableBackgroundHover || enableForegroundHover ? containerRef : null,
     useCallback(
       isHovered => {
+        if (cacheRef.current.isHovered === isHovered) return
         cacheRef.current.isHovered = isHovered
         updateStyles()
       },
@@ -166,9 +160,11 @@ export function Link(props: LinkProps) {
   )
   cacheRef.current.isHovered = initialIsHovered
 
-  useLayoutEffect(() => {
-    updateStyles()
-  }, [updateStyles])
+  useEffect(() => {
+    return () => {
+      textRef.current = null
+    }
+  }, [])
 
   useEffect(() => {
     if (!(Platform.realOS === 'web')) return

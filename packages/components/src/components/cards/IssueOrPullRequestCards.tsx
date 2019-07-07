@@ -427,7 +427,7 @@ export const IssueOrPullRequestCards = React.memo(
         // contentOffset={{ x: 0, y: cardSearchTotalHeight }}
         data-flatlist-with-header-content-container-full-height-fix={isEmpty}
         data={items}
-        disableVirtualization={Platform.OS === 'web'}
+        disableVirtualization={false}
         extraData={rerender}
         initialNumToRender={Math.ceil(Dimensions.get('window').height / 100)}
         keyExtractor={keyExtractor}
@@ -435,7 +435,7 @@ export const IssueOrPullRequestCards = React.memo(
         onViewableItemsChanged={handleViewableItemsChanged}
         pointerEvents={pointerEvents}
         refreshControl={refreshControl}
-        removeClippedSubviews={Platform.OS !== 'web'}
+        removeClippedSubviews
         renderItem={renderItem}
         stickyHeaderIndices={[0]}
         viewabilityConfig={viewabilityConfig}

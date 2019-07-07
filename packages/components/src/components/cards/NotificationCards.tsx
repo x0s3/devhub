@@ -173,20 +173,20 @@ export const NotificationCards = React.memo((props: NotificationCardsProps) => {
     }
 
     return (
-      <ErrorBoundary>
-        <NotificationCard
-          cardViewMode={cardViewMode}
-          enableCompactLabels={enableCompactLabels}
-          isFocused={
-            column.id === focusedColumnId &&
-            item.id === selectedItemIdRef.current &&
-            !disableItemFocus
-          }
-          notification={item}
-          repoIsKnown={props.repoIsKnown}
-          swipeable={props.swipeable}
-        />
-      </ErrorBoundary>
+      // <ErrorBoundary>
+      <NotificationCard
+        cardViewMode={cardViewMode}
+        enableCompactLabels={enableCompactLabels}
+        isFocused={
+          column.id === focusedColumnId &&
+          item.id === selectedItemIdRef.current &&
+          !disableItemFocus
+        }
+        notification={item}
+        repoIsKnown={props.repoIsKnown}
+        swipeable={props.swipeable}
+      />
+      // </ErrorBoundary>
     )
   }
   const renderItem = useCallback(_renderItem, [
@@ -337,6 +337,7 @@ export const NotificationCards = React.memo((props: NotificationCardsProps) => {
     )
   }
 
+  ;(window as any).xxx = Date.now()
   return (
     <FlatList
       ref={flatListRef}
@@ -351,7 +352,7 @@ export const NotificationCards = React.memo((props: NotificationCardsProps) => {
       // contentOffset={{ x: 0, y: cardSearchTotalHeight }}
       data-flatlist-with-header-content-container-full-height-fix={isEmpty}
       data={items}
-      disableVirtualization={Platform.OS === 'web'}
+      disableVirtualization={false}
       extraData={rerender}
       initialNumToRender={Math.ceil(Dimensions.get('window').height / 120)}
       keyExtractor={keyExtractor}
@@ -359,11 +360,18 @@ export const NotificationCards = React.memo((props: NotificationCardsProps) => {
       onViewableItemsChanged={handleViewableItemsChanged}
       pointerEvents={pointerEvents}
       refreshControl={refreshControl}
-      removeClippedSubviews={Platform.OS !== 'web'}
+      removeClippedSubviews
       renderItem={renderItem}
       stickyHeaderIndices={[0]}
       viewabilityConfig={viewabilityConfig}
       windowSize={2}
+
+      // for testing purposes (so react-window use FixedSizeList)
+      // getItemLayout={(data, index) => ({
+      //   index,
+      //   length: 500,
+      //   offset: 500 * index,
+      // })}
     />
   )
 })

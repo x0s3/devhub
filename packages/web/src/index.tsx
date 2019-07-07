@@ -11,12 +11,16 @@ import 'resize-observer-polyfill/dist/ResizeObserver.global'
 import smoothscroll from 'smoothscroll-polyfill'
 smoothscroll.polyfill()
 
-import { ComponentType } from 'react'
-import { AppRegistry } from 'react-native-web'
+import React, { ComponentType } from 'react'
+import { AppRegistry, StyleSheet } from 'react-native-web'
 
 import './index.css'
 
-import { App } from '@devhub/components/src/components/App'
+// StyleSheet.create = obj => obj
+// React.memo = (Component: any) => Component
+
+// tslint:disable-next-line no-var-requires
+const { App } = require('@devhub/components/src/components/App')
 
 const render = (AppComponent: ComponentType) => {
   AppRegistry.registerComponent('devhub', () => AppComponent)
