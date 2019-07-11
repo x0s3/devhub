@@ -6,7 +6,7 @@ import { useTransition } from 'react-spring/native'
 import { useColumn } from '../../hooks/use-column'
 import { Platform } from '../../libs/platform'
 import { sharedStyles } from '../../styles/shared'
-import { columnHeaderHeight } from '../../styles/variables'
+import { columnHeaderHeight, contentPadding } from '../../styles/variables'
 import { getDefaultReactSpringAnimationConfig } from '../../utils/helpers/animations'
 import { SpringAnimatedView } from '../animated/spring/SpringAnimatedView'
 import { AccordionView } from '../common/AccordionView'
@@ -17,12 +17,12 @@ import { useColumnFilters } from '../context/ColumnFiltersContext'
 import { useAppLayout } from '../context/LayoutContext'
 import { fabSpacing, shouldRenderFAB } from '../layout/FABRenderer'
 import { ThemedTouchableOpacity } from '../themed/ThemedTouchableOpacity'
+import { ColumnFilters } from './ColumnFilters'
 import { ColumnHeader } from './ColumnHeader'
 import { ColumnHeaderItem } from './ColumnHeaderItem'
-import { ColumnOptions } from './ColumnOptions'
 import { ColumnSeparator } from './ColumnSeparator'
 
-export interface ColumnOptionsRendererProps {
+export interface ColumnFiltersRendererProps {
   close: (() => void) | undefined
   columnId: string
   containerHeight: number
@@ -31,12 +31,12 @@ export interface ColumnOptionsRendererProps {
   forceOpenAll?: boolean
   inlineMode?: boolean
   isOpen: boolean
-  renderHeader?: 'yes' | 'no' | 'spacing-only'
+  shouldRenderHeader?: 'yes' | 'no' | 'spacing-only'
   startWithFiltersExpanded?: boolean
 }
 
-export const ColumnOptionsRenderer = React.memo(
-  (props: ColumnOptionsRendererProps) => {
+export const ColumnFiltersRenderer = React.memo(
+  (props: ColumnFiltersRendererProps) => {
     const {
       close,
       columnId,
@@ -46,7 +46,7 @@ export const ColumnOptionsRenderer = React.memo(
       forceOpenAll,
       inlineMode,
       isOpen,
-      renderHeader,
+      shouldRenderHeader,
       startWithFiltersExpanded,
     } = props
 
@@ -132,7 +132,7 @@ export const ColumnOptionsRenderer = React.memo(
 
     const availableHeight =
       containerHeight -
-      (shouldRenderFAB({ sizename, isColumnOptionsVisible: true })
+      (shouldRenderFAB({ sizename, isColumnFiltersVisible: true })
         ? fabSize + 2 * fabSpacing
         : 0)
 
@@ -145,12 +145,6 @@ export const ColumnOptionsRenderer = React.memo(
             collapsable={false}
             style={[
               StyleSheet.absoluteFillObject,
-              {
-                top:
-                  renderHeader === 'yes' || renderHeader === 'spacing-only'
-                    ? columnHeaderHeight
-                    : 0,
-              },
               overlayTransition.props,
               { zIndex: 200 },
             ]}
@@ -158,7 +152,7 @@ export const ColumnOptionsRenderer = React.memo(
           >
             <ThemedTouchableOpacity
               analyticsAction="close_via_overlay"
-              analyticsLabel="column_options"
+              analyticsLabel="column_filters"
               activeOpacity={1}
               backgroundColor="backgroundColorMore1"
               style={{
@@ -174,6 +168,18 @@ export const ColumnOptionsRenderer = React.memo(
 
         <SpringAnimatedView
           collapsable={false}
+          hidden={
+            enableAbsolutePositionAnimation &&
+            absolutePositionTransition.props &&
+            fixedPosition &&
+            fixedWidth
+              ? fixedPosition === 'left' || fixedPosition === 'right'
+                ? absolutePositionTransition.props[fixedPosition].interpolate(
+                    (value: number) => (fixedWidth + value <= 0 ? true : false),
+                  )
+                : false
+              : false
+          }
           style={[
             !inlineMode && {
               position: 'absolute',
@@ -229,8 +235,8 @@ export const ColumnOptionsRenderer = React.memo(
               : 'box-none'
           }
         >
-          {renderHeader === 'yes' ? (
-            <ColumnHeader pointerEvents="none">
+          {shouldRenderHeader === 'yes' ? (
+            <ColumnHeader>
               <ColumnHeaderItem
                 analyticsLabel={undefined}
                 fixedIconSize
@@ -240,8 +246,26 @@ export const ColumnOptionsRenderer = React.memo(
                 style={[sharedStyles.flex, { alignItems: 'flex-start' }]}
                 tooltip={undefined}
               />
+
+              <Spacer flex={1} />
+
+              {!inlineMode && !!close && (
+                <ColumnHeaderItem
+                  key="column-flters-close-button"
+                  analyticsAction={undefined}
+                  analyticsLabel={undefined}
+                  enableForegroundHover
+                  fixedIconSize
+                  iconName="x"
+                  onPress={() => close()}
+                  style={{
+                    paddingHorizontal: contentPadding / 3,
+                  }}
+                  tooltip="Close"
+                />
+              )}
             </ColumnHeader>
-          ) : renderHeader === 'spacing-only' ? (
+          ) : shouldRenderHeader === 'spacing-only' ? (
             <Spacer height={columnHeaderHeight} pointerEvents="none" />
           ) : null}
 
@@ -251,11 +275,12 @@ export const ColumnOptionsRenderer = React.memo(
               <AccordionView isOpen={isOpen}>{children}</AccordionView>
             )}
           >
-            <ColumnOptions
+            <ColumnFilters
               key={`column-options-${column.type}`}
               availableHeight={
                 availableHeight -
-                (renderHeader === 'yes' || renderHeader === 'spacing-only'
+                (shouldRenderHeader === 'yes' ||
+                shouldRenderHeader === 'spacing-only'
                   ? columnHeaderHeight
                   : 0)
               }
@@ -274,4 +299,4 @@ export const ColumnOptionsRenderer = React.memo(
   },
 )
 
-ColumnOptionsRenderer.displayName = 'ColumnOptionsRenderer'
+ColumnFiltersRenderer.displayName = 'ColumnFiltersRenderer'

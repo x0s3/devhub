@@ -3,6 +3,7 @@ import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
 
 import { ThemeColors } from '@devhub/core'
 import { Platform } from '../../libs/platform'
+import { sharedStyles } from '../../styles/shared'
 import { contentPadding } from '../../styles/variables'
 import { ThemedIcon } from '../themed/ThemedIcon'
 import { ThemedText } from '../themed/ThemedText'
@@ -143,7 +144,7 @@ export function Checkbox(props: CheckboxProps) {
           styles.checkboxContainer,
           {
             width: size,
-            height: size,
+            height: Math.max(20, size + 4),
             borderRadius: circle ? size / 2 : checkboxBorderRadius,
           },
           squareContainerStyle,
@@ -237,10 +238,7 @@ export function Checkbox(props: CheckboxProps) {
             <ThemedText
               color="foregroundColor"
               numberOfLines={1}
-              style={{
-                flex: 1,
-                lineHeight: size,
-              }}
+              style={[sharedStyles.flex, { lineHeight: size }]}
               {...!!labelTooltip &&
                 Platform.select({
                   web: { title: labelTooltip },

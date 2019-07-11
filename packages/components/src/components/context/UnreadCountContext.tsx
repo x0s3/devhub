@@ -2,10 +2,12 @@ import React, { useContext } from 'react'
 
 import {
   ColumnSubscription,
+  getColumnOption,
   getFilteredItems,
   getItemsFromSubscriptions,
 } from '@devhub/core'
 import { useReduxState } from '../../hooks/use-redux-state'
+import { Platform } from '../../libs/platform'
 import * as selectors from '../../redux/selectors'
 
 export interface UnreadCountProviderProps {
@@ -20,13 +22,18 @@ export const UnreadCountContext = React.createContext<UnreadCountProviderState>(
 UnreadCountContext.displayName = 'UnreadCountContext'
 
 export function UnreadCountProvider(props: UnreadCountProviderProps) {
-  const columns = useReduxState(selectors.columnsArrSelector)
+  const isLogged = useReduxState(selectors.isLoggedSelector)
+  const _columns = useReduxState(selectors.columnsArrSelector)
   const subscriptions = useReduxState(selectors.subscriptionsArrSelector)
+
+  const columns = isLogged ? _columns : []
 
   const unreadIds = new Set<string>([])
 
   columns.forEach(column => {
-    if (!(column && column.type === 'notifications')) return
+    if (!column) return
+    if (!getColumnOption(column, 'enableAppIconUnreadIndicator', Platform.OS))
+      return
 
     const columnSubscriptions = column.subscriptionIds
       .map(subscriptionId =>

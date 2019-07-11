@@ -11,7 +11,7 @@ import { SpringAnimatedView } from '../animated/spring/SpringAnimatedView'
 export type Transition = ReactSpringHook
 
 export interface AccordionViewProps {
-  animation?: 'height' | 'slideRight'
+  // animation?: 'height' | 'slideRight'
   children: React.ReactNode
   isOpen?: boolean
 }
@@ -54,6 +54,9 @@ export const AccordionView = React.memo((props: AccordionViewProps) => {
 
   return (
     <SpringAnimatedView
+      hidden={animatedStyles.height.interpolate((value: number | 'auto') =>
+        value === 'auto' || value > 0 ? false : true,
+      )}
       style={{
         height:
           isOpen && wasOpen === isOpen && hasCompletedAnimationRef.current
